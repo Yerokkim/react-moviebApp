@@ -8,6 +8,7 @@ import { Row } from "antd";
 function LandingPage() {
   const [PMovies, setPMovies] = useState([]);
   const [PMainMovieImg, setpMainMovieImg] = useState(null);
+  const [currentPage, setcurrentPage] = useState(0);
   useEffect(() => {
     const endPoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
     fetchMovies(endPoint);
@@ -17,12 +18,19 @@ function LandingPage() {
     fetch(endPoint)
       .then((response) => response.json())
       .then((response) => {
-        setPMovies([...response.results]);
+        setPMovies([...PMovies, ...response.results]);
         setpMainMovieImg(response.results[0]);
+        setcurrentPage(response.page);
       });
   };
 
-  console.log(PMainMovieImg, "pmovies");
+  const loadMoreItems = () => {
+    const endPoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${
+      currentPage + 1
+    }`;
+    fetchMovies(endPoint);
+  };
+
   return (
     <div style={{ width: "100%", margin: "0" }}>
       {PMainMovieImg && (
@@ -35,8 +43,6 @@ function LandingPage() {
 
       <div style={{ width: "85%", margin: "1rem auto" }}>
         <h2>Movie by lates</h2>
-
-        <button>Read More</button>
 
         <Row gutter={[16, 16]}>
           {PMovies &&
@@ -54,6 +60,8 @@ function LandingPage() {
               </React.Fragment>
             ))}
         </Row>
+
+        <button onClick={loadMoreItems}>Read More</button>
       </div>
     </div>
   );
