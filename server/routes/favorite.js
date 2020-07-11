@@ -45,4 +45,17 @@ router.post("/removeFavorite", (req, res) => {
   });
 });
 
+// get favortie movies
+
+router.post("/getFavoredMovie", (req, res) => {
+  console.log("function should called");
+  Favorite.find({
+    userFrom: req.body.userFrom,
+  }).exec((err, favorite) => {
+    console.log(favorite);
+    if (err) return res.status(400).send(err);
+    res.status(200).json({ success: true, favorite });
+  });
+});
+
 module.exports = router;
